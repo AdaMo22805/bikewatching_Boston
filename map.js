@@ -48,7 +48,7 @@ map.on('load', () => {
   const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json'
   d3.json(jsonurl).then(jsonData => {
     console.log('Loaded JSON Data:', jsonData);  // Log to verify structure
-    stations = jsonData.data.stations;
+    const stations = jsonData.data.stations;
 
     function getCoords(station) {
       const point = new mapboxgl.LngLat(+station.lon, +station.lat);  // Convert lon/lat to Mapbox LngLat
@@ -79,7 +79,7 @@ map.on('load', () => {
   map.on('zoom', updatePositions);     // Update during zooming
   map.on('resize', updatePositions);   // Update on window resize
   map.on('moveend', updatePositions);  // Final adjustment after movement ends
-
+  
   }).catch(error => {
     console.error('Error loading JSON:', error);  // Handle errors if JSON loading fails
   });
