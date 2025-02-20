@@ -11,6 +11,10 @@ const map = new mapboxgl.Map({
   maxZoom: 18 // Maximum allowed zoom
 });
 
+
+let stations = []
+let trips = []
+
 map.on('load', () => { 
   //code 
   map.addSource('boston_route', {
@@ -43,12 +47,12 @@ map.on('load', () => {
   });
   
   const svg = d3.select('#map').select('svg');
-  let stations = [];
+  // let stations = [];
 
   const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json'
   d3.json(jsonurl).then(jsonData => {
-    console.log('Loaded JSON Data:', jsonData);  // Log to verify structure
-    const stations = jsonData.data.stations;
+    // console.log('Loaded JSON Data:', jsonData);  // Log to verify structure
+    stations = jsonData.data.stations;
 
     function getCoords(station) {
       const point = new mapboxgl.LngLat(+station.lon, +station.lat);  // Convert lon/lat to Mapbox LngLat
@@ -73,14 +77,64 @@ map.on('load', () => {
     }
 
     // Initial position update when map loads
-  updatePositions();
+    updatePositions();
 
-  map.on('move', updatePositions);     // Update during map movement
-  map.on('zoom', updatePositions);     // Update during zooming
-  map.on('resize', updatePositions);   // Update on window resize
-  map.on('moveend', updatePositions);  // Final adjustment after movement ends
+    map.on('move', updatePositions);     // Update during map movement
+    map.on('zoom', updatePositions);     // Update during zooming
+    map.on('resize', updatePositions);   // Update on window resize
+    map.on('moveend', updatePositions);  // Final adjustment after movement ends
+  
+      // let trips = [];
+    const csvurl = 'https://dsc106.com/labs/lab07/data/bluebikes-traffic-2024-03.csv'
+    d3.csv(csvurl).then(csvData => {
+      // console.log('Loaded JSON Data:', jsonData);  // Log to verify structure
+      trips = csvData;
+
+
+      const departures = d3.rollup(
+        trips,
+        (v) => v.length,
+        (d) => d.start_station_id,
+      );
+
+      const arrivals = d3.rollup(
+        trips,
+        (v) => v.length,
+        (d) => d.end_station_id,
+      );
+
+      stations = stations.map((station) => {
+      let id = station.short_name;
+      station.arrivals = arrivals.get(id) ?? 0;
+      station.departures = departures.get(id) ?? 0;
+      station.totalTraffic = station.departures + station.arrivals;
+      return station;
+      });
+
+      const radiusScale = d3
+      .scaleSqrt()
+      .domain([0, d3.max(stations, (d) => d.totalTraffic)])
+      .range([0, 25]);
+
+      d3.select('svg')
+        .selectAll('circle')
+        .data(stations)
+        .attr('r', d => radiusScale(d.totalTraffic))
+        .each(function(d) {
+          // Add <title> for browser tooltips
+          d3.select(this)
+            .select('title')
+            .remove();
+
+          d3.select(this)
+            .append('title')
+            .text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
+        });
+    });
+
   
   }).catch(error => {
     console.error('Error loading JSON:', error);  // Handle errors if JSON loading fails
   });
+
 });
