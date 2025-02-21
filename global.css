@@ -11,7 +11,7 @@ body {
 
 header{
   display: grid;
-  grid-template-columns: auto auto; /* Allows stacking */
+  grid-template-rows: auto auto; /* Allows stacking */
   gap: 1em;
   align-items: baseline;
   width: 100%;
@@ -19,8 +19,17 @@ header{
 
 label{
   margin-left: auto;
-  display: block;
+  grid-template-columns: 100px auto auto;
+  display: grid;
   text-align: right;
+  width: 100%;
+  margin-bottom: 10px;
+}
+label #text{
+  width: 50px;
+}
+#time-slider{
+  width: 70%;
 }
 label time {
   display: block; /* Ensures input and time stack inside label */
@@ -38,7 +47,6 @@ em{
   }
   p{
     margin-top: 0;
-    margin-bottom: 3em;
   }
 }
 
