@@ -71,7 +71,8 @@ map.on('load', () => {
     .attr('fill', 'steelblue')  // Circle fill color
     .attr('stroke', 'white')    // Circle border color
     .attr('stroke-width', 1)    // Circle border thickness
-    .attr('opacity', 0.8);      // Circle opacity
+    .attr('opacity', 0.8)      // Circle opacity
+    .style("--departure-ratio", d => stationFlow(isNaN(d.departures / d.totalTraffic) ? 0 : d.departures / d.totalTraffic));
 
     function updatePositions() {
       circles
@@ -123,6 +124,7 @@ map.on('load', () => {
         .selectAll('circle')
         .data(stations)
         .attr('r', d => radiusScale(d.totalTraffic))
+        .style("--departure-ratio", d => stationFlow(isNaN(d.departures / d.totalTraffic) ? 0 : d.departures / d.totalTraffic))
         .each(function(d) {
           // Add <title> for browser tooltips
           d3.select(this)
@@ -253,6 +255,7 @@ function filterTripsbyTime() {
         .selectAll('circle')
         .data(filteredStations)
         .attr('r', d => radiusScale(d.totalTraffic))
+        .style("--departure-ratio", d => stationFlow(isNaN(d.departures / d.totalTraffic) ? 0 : d.departures / d.totalTraffic))
         .each(function(d) {
           d3.select(this).select('title').remove(); // Remove old tooltip
           d3.select(this)
@@ -266,3 +269,5 @@ timeSlider.addEventListener('input', () => {
   updateTimeDisplay();
   filterTripsbyTime();
 });
+
+let stationFlow = d3.scaleQuantize().domain([0, 1]).range([0, 0.5, 1]);

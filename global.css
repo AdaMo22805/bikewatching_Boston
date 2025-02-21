@@ -41,3 +41,43 @@ em{
     margin-bottom: 3em;
   }
 }
+
+.legend{
+  display: flex; /* Apply flexbox */
+  /* flex-direction: row; */
+  gap: 1px; /* Add spacing between items */
+  margin-block: 20px; /* Add space above and below the legend */
+  width: 100%;
+}
+.legend div{
+  flex: 1;
+  padding: 5px 10px;
+  /* border-radius: 5px; */
+  --color-departures: steelblue;
+  --color-arrivals: darkorange;
+  --color: color-mix(
+    in oklch,
+    var(--color-departures) calc(100% * var(--departure-ratio)),
+    var(--color-arrivals)
+  );
+  background-color: var(--color);
+  opacity: 80%;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+}
+
+.legend div:nth-child(1) {
+  text-align: left;
+  color: white; /* Adjust text color for contrast */
+}
+
+.legend div:nth-child(2) {
+  text-align: center;
+  color: white;
+}
+
+.legend div:nth-child(3) {
+  text-align: right;
+  color: white;
+}
