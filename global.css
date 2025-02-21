@@ -8,3 +8,36 @@ body {
     margin: auto;
     padding: 1em;
   }
+
+header{
+  display: grid;
+  grid-template-columns: auto auto; /* Allows stacking */
+  gap: 1em;
+  align-items: baseline;
+  width: 100%;
+}
+
+label{
+  margin-left: auto;
+  display: block;
+  text-align: right;
+}
+label time {
+  display: block; /* Ensures input and time stack inside label */
+  width: 100%; /* Optional: makes slider full width */
+}
+
+em{
+  color: gray;
+  font-style: italic;
+}
+
+#left{
+  h1{
+    margin-bottom: 0;
+  }
+  p{
+    margin-top: 0;
+    margin-bottom: 3em;
+  }
+}
